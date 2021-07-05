@@ -23,16 +23,24 @@ class ViewController: UIViewController {
     var qrCodeFrameView: UIView?
     var barCodeFrameView: UIView?
 
+//    override var shouldAutorotate: Bool {
+//        return false
+//    }
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .landscapeRight
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+      super.viewDidAppear(animated)
+      UIView.setAnimationsEnabled(false)
+      UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
+      UIView.setAnimationsEnabled(true)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        captureButton.layer.cornerRadius = captureButton.frame.size.width / 2
-        captureButton.clipsToBounds = true
-        captureButton.setBackgroundColor(color: .black, forState: .highlighted)
-        captureButton.setTitle("", for: .normal)
-        
-        middleButtonBarderView.layer.cornerRadius = middleButtonBarderView.frame.size.width / 2
-        outerButtonBarderView.layer.cornerRadius = outerButtonBarderView.frame.size.width / 2
+        setupCaptureButton()
 
         // Get an instance of the AVCaptureDevice class to initialize a device object and provide the video as the media type parameter
         guard let captureDevice = AVCaptureDevice.default(for: AVMediaType.video) else {
@@ -63,8 +71,6 @@ class ViewController: UIViewController {
             // Set delegate and use the default dispatch queue to execute the call back
             captureMetadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
             captureMetadataOutput.metadataObjectTypes = [.qr, .ean8, .ean13, .pdf417]
-            
-            
             
             videoPreviewLayer = ScannerOverlayPreviewLayer(session: captureSession!)
             videoPreviewLayer?.frame = previewView.bounds
@@ -109,6 +115,16 @@ class ViewController: UIViewController {
             return
         }
     
+    }
+    
+    func setupCaptureButton() {
+        captureButton.layer.cornerRadius = captureButton.frame.size.width / 2
+        captureButton.clipsToBounds = true
+        captureButton.setBackgroundColor(color: .black, forState: .highlighted)
+        captureButton.setTitle("", for: .normal)
+        
+        middleButtonBarderView.layer.cornerRadius = middleButtonBarderView.frame.size.width / 2
+        outerButtonBarderView.layer.cornerRadius = outerButtonBarderView.frame.size.width / 2
     }
 
     override func viewDidLayoutSubviews() {
@@ -175,6 +191,10 @@ extension ViewController : AVCapturePhotoCaptureDelegate {
 
 extension ViewController : AVCaptureMetadataOutputObjectsDelegate {
 
+    func photoOutput(_ output: AVCapturePhotoOutput, willBeginCaptureFor resolvedSettings: AVCaptureResolvedPhotoSettings) {
+
+    }
+    
     func metadataOutput(_ captureOutput: AVCaptureMetadataOutput,
                        didOutput metadataObjects: [AVMetadataObject],
                        from connection: AVCaptureConnection) {
@@ -218,6 +238,7 @@ extension ViewController : AVCaptureMetadataOutputObjectsDelegate {
 
 extension UIInterfaceOrientation {
     var videoOrientation: AVCaptureVideoOrientation? {
+        return .landscapeRight
         switch self {
         case .portraitUpsideDown: return .portraitUpsideDown
         case .landscapeRight: return .landscapeRight
