@@ -26,22 +26,29 @@ class ViewController: UIViewController {
 //    override var shouldAutorotate: Bool {
 //        return false
 //    }
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .landscapeRight
-        
+    //    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+    //        return .landscapeRight
+    //    }
+    
+    //pilas kevin
+    private var _orientations = UIInterfaceOrientationMask.portrait
+    override var supportedInterfaceOrientations : UIInterfaceOrientationMask {
+        get { return self._orientations }
+        set { self._orientations = newValue }
     }
     
     override func viewDidAppear(_ animated: Bool) {
-      super.viewDidAppear(animated)
-      UIView.setAnimationsEnabled(false)
-      UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
-      UIView.setAnimationsEnabled(true)
+        super.viewDidAppear(animated)
+        supportedInterfaceOrientations = .landscapeRight
+        UIView.setAnimationsEnabled(false)
+        UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
+        UIView.setAnimationsEnabled(true)
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCaptureButton()
-
+        
         // Get an instance of the AVCaptureDevice class to initialize a device object and provide the video as the media type parameter
         guard let captureDevice = AVCaptureDevice.default(for: AVMediaType.video) else {
             fatalError("No video device found")
@@ -153,6 +160,12 @@ class ViewController: UIViewController {
         
         // Call capturePhoto method by passing our photo settings and a delegate implementing AVCapturePhotoCaptureDelegate
         capturePhotoOutput.capturePhoto(with: photoSettings, delegate: self)
+        
+        //pilas kevin
+        supportedInterfaceOrientations = .portrait
+        UIView.setAnimationsEnabled(false)
+        UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
+        UIView.setAnimationsEnabled(true)
     }
 }
 
